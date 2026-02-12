@@ -1004,3 +1004,41 @@ def get_value_color(value: float, thresholds: Dict[str, Tuple[float, float]]) ->
             return "#FF4500"
     
     return "#808080"  # 預設灰色
+# ==========================================# [補充組件] 補足 main.py 需要的缺失函式
+# ==========================================
+
+def inject_css(mode: str = "desktop"):
+    """
+    動態注入 CSS 樣式
+    """
+    if mode == "desktop":
+        st.markdown(DESKTOP_CSS, unsafe_allow_html=True)
+    else:
+        st.markdown(MOBILE_CSS, unsafe_allow_html=True)
+
+def get_lottie_animation(key: str) -> str:
+    """
+    獲取預設的 Lottie 動畫 URL
+    """
+    animations = {
+        "sunrise": "https://assets5.lottiefiles.com/packages/lf20_iv4scbhv.json", # 日出動畫
+        "loading": "https://assets1.lottiefiles.com/packages/lf20_st968skf.json", # 載入中
+        "matrix": "https://assets1.lottiefiles.com/packages/lf20_cy82iv.json"     # Matrix 特效
+    }
+    return animations.get(key, "")
+
+# 確保 DESKTOP_CSS 和 MOBILE_CSS 變數已經在檔案上方定義
+# 如果沒有，請在 inject_css 之前補上：
+DESKTOP_CSS = """
+<style>
+    .main { background-color: #0e1117; color: #ffffff; }
+    /* 這裡可以放 Claude 給你的其他 CSS 內容 */
+</style>
+"""
+
+MOBILE_CSS = """
+<style>
+    .stButton > button { min-height: 60px !important; width: 100%; }
+    /* 這裡可以放 Claude 給你的其他 CSS 內容 */
+</style>
+"""
