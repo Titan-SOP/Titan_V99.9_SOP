@@ -247,7 +247,7 @@ st.markdown(MAIN_CSS, unsafe_allow_html=True)
 # [4] Ray of Hope 動畫 (首次載入)
 # ==========================================
 
-ddef render_sunrise_animation():
+def render_sunrise_animation():
     """渲染日出動畫與標題"""
     lottie_url = get_lottie_animation("sunrise")
     lottie_sunrise = load_lottie_url(lottie_url)
