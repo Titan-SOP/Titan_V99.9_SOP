@@ -247,59 +247,30 @@ st.markdown(MAIN_CSS, unsafe_allow_html=True)
 # [4] Ray of Hope 動畫 (首次載入)
 # ==========================================
 
-def render_sunrise_animation():
-    """
-    渲染日出動畫與宣言
-    """
-    # Matrix 背景效果
-    st.markdown('<div class="matrix-bg"></div>', unsafe_allow_html=True)
+ddef render_sunrise_animation():
+    """渲染日出動畫與標題"""
+    lottie_url = get_lottie_animation("sunrise")
+    lottie_sunrise = load_lottie_url(lottie_url)
     
-    # 動畫容器
-    st.markdown('<div class="animation-container">', unsafe_allow_html=True)
+    st.markdown('<div class="sunrise-container">', unsafe_allow_html=True)
     
-    # 載入日出動畫
-    lottie_sunrise = get_lottie_animation("sunrise")
-    
+    # --- 防護邏輯：如果動畫載入失敗，顯示替代文字而不是報錯 ---
     if lottie_sunrise:
-        st_lottie(
-            lottie_sunrise,
-            height=400,
-            key="sunrise_animation",
-            speed=1.0
-        )
+        try:
+            st_lottie(lottie_sunrise, speed=1.0, height=300, key="sunrise")
+        except Exception:
+            st.warning("🌅 [動畫載入中，請稍候...]") 
     else:
-        # 備用：顯示 Emoji 動畫
-        st.markdown(
-            """
-            <div style="font-size: 200px; text-align: center; animation: pulse 2s infinite;">
-                🌅
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.title("🌅 Titan V100.0") # 備援標題
+        
+    st.markdown("""
+        <h1 style='text-align: center; color: #FFD700;'>Titan SOP V100.0</h1>
+        <p style='text-align: center; font-size: 1.5rem;'>在混亂的股海中，這是你的希望之光。</p>
+    """, unsafe_allow_html=True)
     
-    # 宣言文字
-    st.markdown(
-        """
-        <div class="manifesto">
-            In the chaotic sea of the stock market,<br>
-            this is your <span style="color: #FF4500;">ray of hope</span>.
-            <div class="manifesto-cn">
-                在混亂的股海中，這是你的<span style="color: #FF4500;">希望之光</span>。
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # 確認按鈕
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        if st.button("✨ Enter the Titan Protocol", key="confirm_animation", use_container_width=True):
-            st.session_state.animation_shown = True
-            st.rerun()
+    if st.button("🚀 確認進入戰情室", use_container_width=True):
+        st.session_state.animation_shown = True
+        st.rerun()
 
 
 # ==========================================
