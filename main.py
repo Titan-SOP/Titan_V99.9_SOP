@@ -35,7 +35,7 @@ st.set_page_config(
     page_title="Titan SOP V100.0 - Ray of Hope",
     layout="wide",
     page_icon="🌅",
-    initial_sidebar_state="expanded"  # [PHASE 1 FIX] Changed from collapsed
+    initial_sidebar_state="collapsed"
 )
 
 # ==========================================
@@ -63,28 +63,10 @@ MAIN_CSS = """
         color: #FFFFFF;
     }
     
-    /* 隱藏 Streamlit 雜項，但保留側邊欄按鈕 */
+    /* 隱藏 Streamlit 元素 */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    
-    /* 關鍵修復：讓 Header 透明但可見，這樣按鈕才按得到 */
-    header {
-        visibility: visible !important;
-        background-color: transparent !important;
-    }
-    
-    /* 強制隱藏 Header 裡面的裝飾線條，只留按鈕 */
-    header[data-testid="stHeader"] > div:first-child {
-        background: transparent !important;
-    }
-
-    /* 讓側邊欄展開按鈕 (>) 變成金色並強制顯示 */
-    [data-testid="collapsedControl"] {
-        visibility: visible !important;
-        display: block !important;
-        color: #FFD700 !important;
-        z-index: 99999 !important;
-    }
+    header {visibility: hidden;}
     
     /* 動畫容器 */
     .animation-container {
@@ -469,22 +451,6 @@ def main():
     2. 確認後 → 顯示設備選擇
     3. 選擇後 → 路由到對應 UI
     """
-    
-    # [PHASE 1 CRITICAL FIX] Strict State Initialization
-    # 必須在任何渲染或邏輯之前初始化，防止 NoneType 崩潰
-    import pandas as pd
-    
-    if 'df' not in st.session_state or st.session_state.df is None:
-        st.session_state.df = pd.DataFrame()
-    
-    if 'api_key' not in st.session_state:
-        st.session_state.api_key = ''
-    
-    if 'selected_ticker' not in st.session_state:
-        st.session_state.selected_ticker = None
-    
-    if 'intel_files' not in st.session_state:
-        st.session_state.intel_files = []
     
     # Step 1: 日出動畫（僅首次顯示）
     if not st.session_state.animation_shown:
