@@ -244,8 +244,7 @@ DESKTOP_CSS = """
     
     /* Hide Streamlit elements */
     #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    footer {visibility: hidden;}    
 </style>
 """
 
