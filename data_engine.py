@@ -752,23 +752,6 @@ def load_cb_data_from_upload(uploaded_file) -> Optional[pd.DataFrame]:
                 rename_map[col] = 'avg_volume'
 
         df.rename(columns=rename_map, inplace=True)
-# Apply mapping
-        df.rename(columns=rename_map, inplace=True)
-        
-        # ==========================================
-        # [CRITICAL HOTFIX] 兼容性別名補丁
-        # 解決 UI 報錯 "['stock_code', 'close'] not in index"
-        # ==========================================
-        if 'code' in df.columns:
-            df['stock_code'] = df['code']  # 讓 code 等於 stock_code
-        
-        if 'price' in df.columns:
-            df['close'] = df['price']      # 讓 price 等於 close
-            
-        if 'underlying_price' in df.columns:
-            df['underlying_close'] = df['underlying_price'] # 標的價格別名
-            
-        # ==========================================
         df = df.loc[:, ~df.columns.duplicated()]
         
         # 檢查必要欄位
