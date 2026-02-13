@@ -63,10 +63,28 @@ MAIN_CSS = """
         color: #FFFFFF;
     }
     
-    /* 隱藏 Streamlit 元素 */
+    /* 隱藏 Streamlit 雜項，但保留側邊欄按鈕 */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    
+    /* 關鍵修復：讓 Header 透明但可見，這樣按鈕才按得到 */
+    header {
+        visibility: visible !important;
+        background-color: transparent !important;
+    }
+    
+    /* 強制隱藏 Header 裡面的裝飾線條，只留按鈕 */
+    header[data-testid="stHeader"] > div:first-child {
+        background: transparent !important;
+    }
+
+    /* 讓側邊欄展開按鈕 (>) 變成金色並強制顯示 */
+    [data-testid="collapsedControl"] {
+        visibility: visible !important;
+        display: block !important;
+        color: #FFD700 !important;
+        z-index: 99999 !important;
+    }
     
     /* 動畫容器 */
     .animation-container {
