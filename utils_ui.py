@@ -60,14 +60,18 @@ def load_lottie_local(filepath: str) -> Optional[dict]:
 DESKTOP_CSS = """
 <style>
     /* =========================================
-       [CRITICAL FIX] 強制顯示側邊欄
-       修復從手機版切換回電腦版時，側邊欄消失的問題
+       [SIDEBAR FIX] 智慧側邊欄 (可收折 + 黑金質感)
        ========================================= */
     [data-testid="stSidebar"] {
-        display: block !important;
-        width: 300px !important;
-        background-color: #2a2a2a;
-        border-right: 2px solid #444;
+        background-color: #0e1117;
+        border-right: 1px solid #333;
+    }
+    
+    /* 修正：移除 display: block !important 以恢復收折功能 */
+    /* 我們改用 main.py 的 initial_sidebar_state="expanded" 來控制展開 */
+
+    [data-testid="stSidebarNav"] {
+        padding-top: 20px;
     }
 
     /* Main container styling */

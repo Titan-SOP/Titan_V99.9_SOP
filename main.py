@@ -55,26 +55,78 @@ if 'df' not in st.session_state or st.session_state.df is None:
 
 MAIN_CSS = """
 <style>
-    .stApp { background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%); color: #FFFFFF; }
+    /* 全局背景：深邃宇宙 + 極光流動 */
+    .stApp {
+        background: radial-gradient(circle at 50% 10%, #1a1a2e 0%, #000000 100%);
+        color: #FFFFFF;
+    }
+    
+    /* 隱藏原生元素 */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     header {visibility: hidden;}
     
-    /* 選擇頁面樣式 */
-    .choice-card {
-        background: linear-gradient(135deg, #1a1a2e 0%, #2a2a3e 100%);
-        border: 2px solid #444; border-radius: 24px; padding: 40px;
-        text-align: center; cursor: pointer; transition: all 0.3s;
+    /* 呼吸燈標題特效 */
+    @keyframes glow {
+        0% { text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700; }
+        50% { text-shadow: 0 0 20px #FFA500, 0 0 40px #FF4500; }
+        100% { text-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700; }
     }
-    .choice-card:hover { transform: translateY(-10px); border-color: #00FF00; }
-    .choice-icon { font-size: 80px; margin-bottom: 20px; }
-    .choice-title { font-size: 24px; font-weight: bold; color: #FFD700; }
     
-    /* 日出容器 */
-    .sunrise-container { display: flex; justify-content: center; margin-bottom: 20px; }
+    h1 {
+        animation: glow 3s infinite alternate;
+        font-family: 'Helvetica Neue', sans-serif;
+        letter-spacing: 2px;
+    }
+    
+    /* 選擇卡片：玻璃擬態 (Glassmorphism) */
+    .choice-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    
+    .choice-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        border-color: #FFD700;
+        box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    .choice-icon {
+        font-size: 80px;
+        margin-bottom: 20px;
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    }
+    
+    .choice-title {
+        font-size: 28px;
+        font-weight: 700;
+        background: -webkit-linear-gradient(#FFD700, #FFA500);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+    }
+    
+    /* 按鈕美化 */
+    div.stButton > button {
+        background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+        border: none;
+        color: black;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+    div.stButton > button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+    }
 </style>
 """
-st.markdown(MAIN_CSS, unsafe_allow_html=True)
 
 # ==========================================
 # [4] 日出動畫
