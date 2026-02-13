@@ -838,3 +838,88 @@ def inject_css(mode: str = "desktop"):
     else:
         if 'MOBILE_CSS' in globals():
             st.markdown(MOBILE_CSS, unsafe_allow_html=True)
+
+# ==========================================
+# [MOBILE PATCH] 手機版專用組件 (請貼在 utils_ui.py 最下方)
+# ==========================================
+
+def get_rating_color(rating_str: str) -> str:
+    """
+    解析信評字串並返回對應顏色
+    範例輸入: "SSS (Titan)" -> 返回 #FFD700
+    """
+    if not isinstance(rating_str, str):
+        return "#808080"
+    
+    # 提取等級 (例如從 "SSS (Titan)" 提取 "SSS")
+    level = rating_str.split(" ")[0]
+    
+    # 顏色對照表 (Titan Color Palette)
+    colors = {
+        "SSS": "#FFD700", "Titan": "#FFD700",
+        "AAA": "#FF4500", "Dominator": "#FF4500",
+        "Phoenix": "#FF6347", 
+        "Launchpad": "#32CD32",
+        "AA+": "#FFA500", "AA": "#FFD700", "AA-": "#ADFF2F",
+        "A+": "#7FFF00", "A": "#98FB98",
+        "BBB+": "#F0E68C", "BBB": "#D3D3D3", "BBB-": "#DDA0DD",
+        "Divergence": "#FF1493",
+        "BB+": "#FFA07A", "BB": "#FF6347", "BB-": "#DC143C",
+        "B+": "#8B0000", "B": "#800000",
+        "C": "#4B0082", "D": "#000000", "Reversal": "#00CED1"
+    }
+    return colors.get(level, "#808080")
+
+def format_rating_badge(rating_str: str) -> str:
+    """生成 HTML 評級標籤"""
+    color = get_rating_color(rating_str)
+    return f'<span style="background-color: {color}; color: black; padding: 4px 8px; border-radius: 4px; font-weight: bold;">{rating_str}</span>'
+
+def create_mobile_nav_bar():
+    """
+    渲染手機版底部導航欄
+    使用 Streamlit Columns 模擬 App Tab Bar
+    """
+    st.markdown("---") # 分隔線
+    
+    # 定義導航項目
+    nav_items = [
+        ("🏠", "home", "獵殺"),
+        ("📊", "analysis", "監控"),
+        ("🤖", "ai", "AI"),
+        ("⚙️", "settings", "設定")
+    ]
+    
+    # 建立 4 個欄位
+    cols = st.columns(4)
+    
+    # 當前選中的 Tab
+    current_tab = st.session_state.get("mobile_tab", "home")
+    
+    for i, (icon, key, label) in enumerate(nav_items):
+        with cols[i]:
+            # 判斷是否選中，改變按鈕樣式
+            is_selected = (current_tab == key)
+            btn_type = "primary" if is_selected else "secondary"
+            
+            # 渲染按鈕
+            if st.button(f"{icon}\n{label}", key=f"nav_{key}", type=btn_type, use_container_width=True):
+                st.session_state.mobile_tab = key
+                st.rerun()
+
+def create_swipe_buttons() -> tuple:
+    """
+    渲染 Tinder 風格的左右操作按鈕
+    Returns: (pass_clicked, lock_clicked)
+    """
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        # 左邊：跳過 (紅色系)
+        pass_clicked = st.button("❌ 跳過", key="btn_pass", use_container_width=True)
+        
+    with col2:
+        # 右邊：鎖定 (綠色系)
+        lock_clicked = st.button("❤️ 鎖定", key="btn_lock", use_container_width=True, type="primary")
+        
+    return pass_clicked, lock_clicked
