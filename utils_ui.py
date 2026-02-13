@@ -59,25 +59,16 @@ def load_lottie_local(filepath: str) -> Optional[dict]:
 
 DESKTOP_CSS = """
 <style>
-    /* =========================================
-       [SIDEBAR FIX] 智慧側邊欄 (可收折 + 黑金質感)
-       ========================================= */
-    [data-testid="stSidebar"] {
-        background-color: #0e1117;
-        border-right: 1px solid #333;
-    }
-    
-    /* 修正：移除 display: block !important 以恢復收折功能 */
-    /* 我們改用 main.py 的 initial_sidebar_state="expanded" 來控制展開 */
-
-    [data-testid="stSidebarNav"] {
-        padding-top: 20px;
-    }
-
     /* Main container styling */
     .stApp {
         background-color: #1a1a1a;
         color: #FAFAFA;
+    }
+    
+    /* Sidebar styling */
+    [data-testid="stSidebar"] {
+        background-color: #2a2a2a;
+        border-right: 2px solid #444;
     }
     
     [data-testid="stSidebar"] h1, 
