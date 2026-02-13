@@ -923,3 +923,36 @@ def create_swipe_buttons() -> tuple:
         lock_clicked = st.button("❤️ 鎖定", key="btn_lock", use_container_width=True, type="primary")
         
     return pass_clicked, lock_clicked
+
+# ==========================================
+# [DESKTOP PATCH] 桌面版專用組件 (請貼在 utils_ui.py 最下方)
+# ==========================================
+
+def create_glowing_title(text: str) -> str:
+    """
+    創建帶有發光效果的標題 HTML
+    """
+    html = f"""
+    <div style="
+        text-align: center;
+        margin-bottom: 30px;
+        animation: fadeIn 1.5s ease-in;
+    ">
+        <h1 style="
+            font-family: 'Roboto', sans-serif;
+            color: #FFD700;
+            font-size: 3em;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7), 0 0 20px rgba(255, 215, 0, 0.5);
+            margin: 0;
+            font-weight: 700;
+            letter-spacing: 2px;
+        ">{text}</h1>
+        <div style="
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #FFD700, transparent);
+            margin-top: 10px;
+            width: 100%;
+        "></div>
+    </div>
+    """
+    return html

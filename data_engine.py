@@ -792,3 +792,66 @@ def load_cb_data_from_upload(uploaded_file) -> Optional[pd.DataFrame]:
     except Exception as e:
         st.error(f"檔案讀取或格式清洗失敗: {e}")
         return None
+
+# ==========================================
+# [DATA PATCH] 數據上傳處理 (請貼在 data_engine.py 最下方)
+# ==========================================
+
+def load_cb_data_from_upload(uploaded_file) -> pd.DataFrame:
+    """
+    從上傳的 Excel/CSV 檔案讀取 CB 數據
+    並進行必要的欄位清洗
+    """
+    if uploaded_file is None:
+        return pd.DataFrame()
+    
+    try:
+        # 判斷副檔名
+        if uploaded_file.name.endswith('.csv'):
+            df = pd.read_csv(uploaded_file)
+        else:
+            df = pd.read_excel(uploaded_file)
+            
+        # 欄位標準化 (轉小寫)
+        df.columns = df.columns.str.lower()
+        
+        # 關鍵欄位對應 (Mapping)
+        # 這裡處理使用者可能上傳的各種中文欄位名
+        col_map = {
+            '代號': 'code', '股票代號': 'code',
+            '名稱': 'name', '股票名稱': 'name',
+            '現價': 'price', '價格': 'price', '收盤價': 'price',
+            '股票代碼': 'stock_code', '標的代號': 'stock_code'
+        }
+        df.rename(columns=col_map, inplace=True)
+        
+        # 確保有代號欄位
+        if 'code' not in df.columns:
+            # 嘗試找第一欄當作 code
+            df['code'] = df.iloc[:, 0].astype(str)
+            
+        # 數據清洗
+        # 移除空值
+        df.dropna(subset=['code'], inplace=True)
+        
+        # 轉換數值
+        for col in ['price', 'close', 'open', 'high', 'low', 'volume']:
+            if col in df.columns:
+                df[col] = pd.to_numeric(df[col], errors='coerce')
+                
+        return df
+        
+    except Exception as e:
+        st.error(f"❌ 檔案讀取失敗: {e}")
+        return pd.DataFrame()
+    
+def get_market_benchmarks(period='1mo'):
+    """
+    獲取市場基準數據 (VIX, 大盤)
+    """
+    try:
+        tickers = ['^VIX', '^TWII', '^GSPC']
+        data = yf.download(tickers, period=period, progress=False)['Close']
+        return data
+    except:
+        return pd.DataFrame()
