@@ -248,21 +248,6 @@ DESKTOP_CSS = """
     header {visibility: hidden;}
 </style>
 """
-/* === 修復側邊欄展開按鈕 === */
-    [data-testid="stHeader"] {
-        background-color: rgba(0,0,0,0); /* 讓頂部橫條透明 */
-        visibility: visible !important;  /* 強制顯示頂部區域 */
-    }
-    
-    [data-testid="collapsedControl"] {
-        color: #FFD700 !important;      /* 讓展開箭頭變成金色 */
-        display: block !important;
-    }
-    
-    /* 隱藏右上的漢堡選單 (Deploy/Settings)，只留左上的箭頭 */
-    [data-testid="stToolbar"] {
-        visibility: hidden;
-    }
 
 # ==========================================
 # [3] 移動版 CSS (Netflix/Robinhood 風格)
