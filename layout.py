@@ -1,72 +1,65 @@
 # ui_desktop/layout.py
-# Titan SOP V100.0 - Desktop UI Layout
-# Bloomberg Terminal Style Interface
+# Titan SOP V100.0 - Desktop UI Layout (PHASE 1 OVERHAUL)
+# CRITICAL: UNLOCK Tabs 3, 4, 5, 6
 
 import streamlit as st
 import pandas as pd
-from utils_ui import inject_css, create_glowing_title
+from utils_ui import inject_css, create_glowing_title, render_sidebar_utilities
 from data_engine import load_cb_data_from_upload
 
-# 導入各個 Tab
-from ui_desktop import tab1_macro, tab2_radar, tab3_sniper, tab4_decision, tab6_metatrend
+# [PHASE 1] Import with error handling
+try:
+    from ui_desktop import tab1_macro
+except:
+    tab1_macro = None
+
+try:
+    from ui_desktop import tab2_radar
+except:
+    tab2_radar = None
+
+try:
+    from ui_desktop import tab3_sniper
+except:
+    tab3_sniper = None
+
+try:
+    from ui_desktop import tab4_decision
+except:
+    tab4_decision = None
+
+try:
+    from ui_desktop import tab6_metatrend
+except:
+    tab6_metatrend = None
 
 
 def render():
-    """
-    渲染桌面版 UI
+    """渲染桌面版 UI - [PHASE 1 OVERHAUL] UNLOCK Tabs 3-6"""
     
-    功能：
-    - 側邊欄：CB 清單上傳、API Key、返回按鈕
-    - 主區域：6 個 Tab
-    """
-    # 注入桌面版 CSS
     inject_css("desktop")
-    
-    # 初始化 Session State
-    if 'df' not in st.session_state:
-        st.session_state.df = pd.DataFrame()
-    
-    if 'api_key' not in st.session_state:
-        st.session_state.api_key = ''
-    
-    if 'selected_ticker' not in st.session_state:
-        st.session_state.selected_ticker = None
     
     # ==========================================
     # 側邊欄設定
     # ==========================================
     
     with st.sidebar:
-        # [UX FIX] 置頂提示 - 防止用戶找不到功能
-        st.markdown(
-            """
-            <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); 
-                        padding: 10px 15px; 
-                        border-radius: 10px; 
-                        text-align: center;
-                        margin-bottom: 15px;">
-                <div style="color: #000000; font-weight: bold; font-size: 14px;">
-                    ⚡ 側邊欄控制中心 ⚡
-                </div>
-                <div style="color: #333333; font-size: 12px; margin-top: 5px;">
-                    上傳數據 | 設定 API | 快速操作
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        st.markdown("""
+        <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); 
+                    padding: 10px 15px; border-radius: 10px; text-align: center; margin-bottom: 15px;">
+            <div style="color: #000000; font-weight: bold; font-size: 14px;">⚡ 側邊欄控制中心 ⚡</div>
+            <div style="color: #333333; font-size: 12px; margin-top: 5px;">上傳數據 | 設定 API | 快速操作</div>
+        </div>
+        """, unsafe_allow_html=True)
         
         st.markdown(create_glowing_title("⚙️ 系統設定"), unsafe_allow_html=True)
         
-        # 返回模式選擇按鈕
         if st.button("🔄 切換模式", use_container_width=True):
             st.session_state.device_mode = None
             st.session_state.choice_confirmed = False
             st.rerun()
         
         st.divider()
-        
-        # ========== CB 清單上傳 ==========
         st.header("📂 CB 資料上傳")
         
         uploaded_file = st.file_uploader(
@@ -82,16 +75,12 @@ def render():
                 if df is not None and not df.empty:
                     st.session_state.df = df
                     st.success(f"✅ 載入 {len(df)} 筆 CB")
-                    
-                    # 顯示基本統計
                     st.metric("總數量", len(df))
                     if 'close' in df.columns:
                         avg_price = df['close'].mean()
                         st.metric("平均市價", f"{avg_price:.2f}")
         
         st.divider()
-        
-        # ========== API Key 設定 ==========
         st.header("🔑 AI 功能")
         
         api_key = st.text_input(
@@ -105,170 +94,40 @@ def render():
             st.session_state.api_key = api_key
             st.success("✅ API Key 已設定")
         
-        st.divider()
-        
-        # ========== 快速清除 ==========
-        st.header("🧹 快速操作")
-        
-        if st.button("清除快取", use_container_width=True):
-            st.cache_data.clear()
-            st.cache_resource.clear()
-            st.success("✅ 快取已清除")
-            st.rerun()
-        
-        if st.button("重置數據", use_container_width=True):
-            st.session_state.df = pd.DataFrame()
-            st.session_state.selected_ticker = None
-            st.success("✅ 數據已重置")
-            st.rerun()
+        # [PHASE 1] Use utility function
+        render_sidebar_utilities()
     
     # ==========================================
     # 主標題
     # ==========================================
     
-    st.markdown(
-        create_glowing_title("🏛️ Titan SOP V100.0 - Desktop War Room"),
-        unsafe_allow_html=True
-    )
-    
+    st.markdown(create_glowing_title("🏛️ Titan SOP V100.0 - Desktop War Room"), unsafe_allow_html=True)
     st.caption("Bloomberg Terminal Style | 專業級可轉債獵殺系統")
     
-    # [UX FIX] 側邊欄提示 - 解決縮小後找不到按鈕的問題
-    st.markdown(
-        """
-        <div style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a2a 100%); 
-                    padding: 15px 20px; 
-                    border-radius: 10px; 
-                    border-left: 4px solid #FFD700;
-                    margin-bottom: 20px;">
-            <div style="display: flex; align-items: center; gap: 15px;">
-                <div style="font-size: 32px;">👈</div>
-                <div>
-                    <div style="color: #FFD700; font-size: 16px; font-weight: bold; margin-bottom: 5px;">
-                        💡 找不到上傳按鈕？
-                    </div>
-                    <div style="color: #AAAAAA; font-size: 14px;">
-                        請點擊左上角的 <strong style="color: #FFFFFF;">「>」符號</strong> 展開側邊欄，即可看到：
-                    </div>
-                    <div style="color: #00FF00; font-size: 13px; margin-top: 5px;">
-                        📂 CB 資料上傳 | 🔑 API Key 設定 | 🧹 快速操作
-                    </div>
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #2a2a2a 0%, #1a1a2a 100%); 
+                padding: 15px 20px; border-radius: 10px; border-left: 4px solid #FFD700; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div style="font-size: 32px;">👈</div>
+            <div>
+                <div style="color: #FFD700; font-size: 16px; font-weight: bold; margin-bottom: 5px;">
+                    💡 找不到上傳按鈕？
+                </div>
+                <div style="color: #AAAAAA; font-size: 14px;">
+                    請點擊左上角的 <strong style="color: #FFFFFF;">「>」符號</strong> 展開側邊欄
+                </div>
+                <div style="color: #00FF00; font-size: 13px; margin-top: 5px;">
+                    📂 CB 資料上傳 | 🔑 API Key 設定 | 🧹 快速操作
                 </div>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True
-    )
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("---")
     
     # ==========================================
-    # 檢查數據是否已載入
-    # ==========================================
-    
-    if st.session_state.df.empty:
-        # [UX FIX] 超大提示框，無法忽視
-        st.markdown(
-            """
-            <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); 
-                        padding: 40px 30px; 
-                        border-radius: 20px; 
-                        text-align: center;
-                        margin: 40px 0;
-                        box-shadow: 0 8px 32px rgba(255, 215, 0, 0.4);
-                        animation: pulse 2s infinite;">
-                <div style="font-size: 80px; margin-bottom: 20px;">📂</div>
-                <h2 style="color: #000000; margin: 0 0 15px 0; font-size: 32px;">
-                    請先上傳 CB 清單
-                </h2>
-                <p style="color: #333333; font-size: 18px; margin-bottom: 20px;">
-                    點擊 <strong>左上角的「>」</strong> 展開側邊欄 → 找到「📂 CB 資料上傳」
-                </p>
-                <div style="background: #000000; 
-                            color: #FFFFFF; 
-                            padding: 15px; 
-                            border-radius: 10px; 
-                            display: inline-block;
-                            font-size: 16px;">
-                    💡 <strong>第一步</strong>：點擊左上角 <span style="color: #FFD700;">「>」</span> 符號<br>
-                    💡 <strong>第二步</strong>：上傳 Excel/CSV 檔案<br>
-                    💡 <strong>第三步</strong>：開始使用 6 大功能模組
-                </div>
-            </div>
-            
-            <style>
-            @keyframes pulse {
-                0%, 100% { transform: scale(1); }
-                50% { transform: scale(1.02); }
-            }
-            </style>
-            """,
-            unsafe_allow_html=True
-        )
-        
-        st.markdown("---")
-        
-        # 顯示功能預覽
-        st.subheader("📋 功能預覽")
-        
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.markdown("""
-            **🛡️ 宏觀風控**
-            - VIX 恐慌指數
-            - 市場信號燈
-            - 產業熱圖
-            """)
-        
-        with col2:
-            st.markdown("""
-            **🏹 獵殺雷達**
-            - CB 全景掃描
-            - 智慧篩選
-            - 即時排序
-            """)
-        
-        with col3:
-            st.markdown("""
-            **🎯 單兵狙擊**
-            - K 線圖表
-            - 技術指標
-            - 回測引擎
-            """)
-        
-        st.divider()
-        
-        col4, col5, col6 = st.columns(3)
-        
-        with col4:
-            st.markdown("""
-            **🚀 全球決策**
-            - AI 參謀本部
-            - 五大角鬥士
-            - 操作指令
-            """)
-        
-        with col5:
-            st.markdown("""
-            **📚 戰略百科**
-            - SOP 知識庫
-            - 第一性原則
-            - 時間套利
-            """)
-        
-        with col6:
-            st.markdown("""
-            **🧠 元趨勢戰法**
-            - 7D 幾何引擎
-            - 22 階信評
-            - 獵殺清單
-            """)
-        
-        return
-    
-    # ==========================================
-    # 6 個 Tab
+    # [PHASE 1 CRITICAL] 6 個 Tab - UNLOCK Strategy
     # ==========================================
     
     tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
@@ -280,40 +139,118 @@ def render():
         "🧠 元趨勢戰法"
     ])
     
+    # Tab 1 & 2: LOCK (需要數據)
     with tab1:
-        tab1_macro.render()
+        if st.session_state.df.empty:
+            st.info("📂 請先在側邊欄上傳 CB 清單以使用宏觀風控功能")
+        else:
+            if tab1_macro:
+                try:
+                    tab1_macro.render()
+                except Exception as e:
+                    st.error(f"Tab 1 渲染失敗: {e}")
+            else:
+                st.warning("Tab 1 模組未找到")
     
     with tab2:
-        tab2_radar.render()
+        if st.session_state.df.empty:
+            st.info("📂 請先在側邊欄上傳 CB 清單以使用獵殺雷達功能")
+        else:
+            if tab2_radar:
+                try:
+                    tab2_radar.render()
+                except Exception as e:
+                    st.error(f"Tab 2 渲染失敗: {e}")
+            else:
+                st.warning("Tab 2 模組未找到")
     
+    # Tab 3, 4, 5, 6: UNLOCK (無需數據)
     with tab3:
-        tab3_sniper.render()
+        if tab3_sniper:
+            try:
+                tab3_sniper.render()
+            except Exception as e:
+                st.error(f"Tab 3 渲染失敗: {e}")
+        else:
+            render_tab3_placeholder()
     
     with tab4:
-        tab4_decision.render()
+        if tab4_decision:
+            try:
+                tab4_decision.render()
+            except Exception as e:
+                st.error(f"Tab 4 渲染失敗: {e}")
+        else:
+            render_tab4_placeholder()
     
     with tab5:
         render_tab5_placeholder()
     
     with tab6:
-        tab6_metatrend.render()
+        if tab6_metatrend:
+            try:
+                tab6_metatrend.render()
+            except Exception as e:
+                st.error(f"Tab 6 渲染失敗: {e}")
+        else:
+            render_tab6_placeholder()
+
+
+# ==========================================
+# Placeholder Functions
+# ==========================================
+
+def render_tab3_placeholder():
+    """Tab 3 佔位符"""
+    st.subheader("🎯 單兵狙擊 (Phase 1 Skeleton)")
+    
+    ticker_input = st.text_input("輸入股票代號", placeholder="例如：2330, NVDA")
+    
+    if ticker_input and st.button("🔍 查詢"):
+        st.info(f"🚧 Phase 1: K 線圖與回測功能尚未完整移植 (標的: {ticker_input})")
+
+
+def render_tab4_placeholder():
+    """Tab 4 佔位符"""
+    st.subheader("🚀 全球決策 (Phase 1 Skeleton)")
+    
+    ticker_input = st.text_input("輸入分析標的", placeholder="例如：2330", key="tab4_ticker")
+    
+    if ticker_input and st.button("🤖 啟動 AI 辯論"):
+        st.info(f"🚧 Phase 1: AI 參謀本部尚未完整移植 (標的: {ticker_input})")
 
 
 def render_tab5_placeholder():
-    """Tab 5 暫時佔位符"""
-    st.subheader("📚 戰略百科 (開發中)")
+    """Tab 5 佔位符"""
+    st.subheader("📚 戰略百科 (Phase 1 Skeleton)")
     
     st.info("""
-    ### 🚧 功能規劃
+### 🚧 功能規劃
+
+**知識庫內容**:
+- SOP 核心策略
+- 20 條第一性原則
+- 時間套利事件
+- 發債故事關鍵字
+
+**未來功能**:
+- 知識庫搜索
+- 策略案例庫
+- 歷史回測資料庫
+""")
+
+
+def render_tab6_placeholder():
+    """Tab 6 佔位符"""
+    st.subheader("🧠 元趨勢戰法 (Phase 1 Skeleton)")
     
-    **知識庫內容**:
-    - SOP 核心策略
-    - 20 條第一性原則
-    - 時間套利事件
-    - 發債故事關鍵字
+    ticker_input = st.text_input("輸入掃描標的", placeholder="例如：2330", key="tab6_ticker")
     
-    **未來功能**:
-    - 知識庫搜索
-    - 策略案例庫
-    - 歷史回測資料庫
-    """)
+    if ticker_input and st.button("📐 計算 7D 幾何"):
+        from core_logic import compute_7d_geometry, titan_rating_system
+        
+        geo_data = compute_7d_geometry(ticker_input)
+        rating = titan_rating_system(geo_data)
+        
+        st.write(f"**評級**: {rating[0]} - {rating[1]}")
+        st.caption(rating[2])
