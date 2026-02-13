@@ -35,7 +35,7 @@ st.set_page_config(
     page_title="Titan SOP V100.0 - Ray of Hope",
     layout="wide",
     page_icon="🌅",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"  # [PHASE 1 FIX] Changed from collapsed
 )
 
 # ==========================================
@@ -451,6 +451,22 @@ def main():
     2. 確認後 → 顯示設備選擇
     3. 選擇後 → 路由到對應 UI
     """
+    
+    # [PHASE 1 CRITICAL FIX] Strict State Initialization
+    # 必須在任何渲染或邏輯之前初始化，防止 NoneType 崩潰
+    import pandas as pd
+    
+    if 'df' not in st.session_state or st.session_state.df is None:
+        st.session_state.df = pd.DataFrame()
+    
+    if 'api_key' not in st.session_state:
+        st.session_state.api_key = ''
+    
+    if 'selected_ticker' not in st.session_state:
+        st.session_state.selected_ticker = None
+    
+    if 'intel_files' not in st.session_state:
+        st.session_state.intel_files = []
     
     # Step 1: 日出動畫（僅首次顯示）
     if not st.session_state.animation_shown:

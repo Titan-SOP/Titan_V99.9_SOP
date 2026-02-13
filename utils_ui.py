@@ -956,3 +956,46 @@ def create_glowing_title(text: str) -> str:
     </div>
     """
     return html
+
+
+# ==========================================
+# [PHASE 1 REPAIR] 側邊欄工具函數
+# ==========================================
+
+def render_sidebar_utilities():
+    """
+    渲染側邊欄系統工具
+    
+    功能：
+    - 清除快取與重置
+    - 情報文件上傳
+    
+    [V82.0 Legacy Logic Transplant]
+    """
+    st.divider()
+    st.header("🔧 系統工具")
+    
+    # 清除快取按鈕
+    if st.button("🗑️ 清除快取 & 重置", use_container_width=True):
+        st.cache_data.clear()
+        st.cache_resource.clear()
+        st.success("✅ 快取已清除")
+        st.rerun()
+    
+    st.divider()
+    
+    # 情報文件上傳
+    st.header("📂 情報上傳")
+    intel_files = st.file_uploader(
+        "上傳情報文件 (PDF, TXT)",
+        type=['pdf', 'txt'],
+        accept_multiple_files=True,
+        key="intel_files",
+        help="支援多檔案上傳，用於 AI 深度分析"
+    )
+    
+    if intel_files:
+        st.session_state['intel_files'] = intel_files
+        st.success(f"✅ 已上傳 {len(intel_files)} 個文件")
+    else:
+        st.session_state['intel_files'] = []
