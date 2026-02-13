@@ -59,16 +59,21 @@ def load_lottie_local(filepath: str) -> Optional[dict]:
 
 DESKTOP_CSS = """
 <style>
+    /* =========================================
+       [CRITICAL FIX] 強制顯示側邊欄
+       修復從手機版切換回電腦版時，側邊欄消失的問題
+       ========================================= */
+    [data-testid="stSidebar"] {
+        display: block !important;
+        width: 300px !important;
+        background-color: #2a2a2a;
+        border-right: 2px solid #444;
+    }
+
     /* Main container styling */
     .stApp {
         background-color: #1a1a1a;
         color: #FAFAFA;
-    }
-    
-    /* Sidebar styling */
-    [data-testid="stSidebar"] {
-        background-color: #2a2a2a;
-        border-right: 2px solid #444;
     }
     
     [data-testid="stSidebar"] h1, 
